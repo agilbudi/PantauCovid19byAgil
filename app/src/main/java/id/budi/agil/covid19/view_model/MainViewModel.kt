@@ -20,6 +20,8 @@ class MainViewModel: ViewModel() {
     private val countryList = MutableLiveData<ArrayList<Countries>>()
     private val worldList = MutableLiveData<World>()
     private var countryFilterList = MutableLiveData<ArrayList<Countries>>()
+    private val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private val outputFormat = SimpleDateFormat("EEEE, dd MMMM yyyy")
     init {
         countryFilterList = countryList
     }
@@ -28,13 +30,11 @@ class MainViewModel: ViewModel() {
         apiService.getSummary().enqueue(object : Callback<AllCountries>{
             override fun onResponse(call: Call<AllCountries>, response: Response<AllCountries>) {
                 if (response.isSuccessful) {
-                    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                    val outputFormat = SimpleDateFormat("EEEE, dd MMMM yyyy")
                     val responseCountries: ArrayList<Countries>? = response.body()?.Countries
                     val responseWorld = response.body()?.Global
 
                     if (query != null) {
-                        var resultList = ArrayList<Countries>()
+                        val resultList = ArrayList<Countries>()
                         if (responseCountries != null) {
                             for (row in responseCountries) {
                                 if (row.Country!!.toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT))) {
@@ -46,7 +46,7 @@ class MainViewModel: ViewModel() {
                     } else {
                         countryList.postValue(responseCountries)
                     }
-                    val date: Date? = inputFormat.parse(responseWorld?.Date)
+                    val date: Date? = inputFormat.parse(responseWorld?.Date.toString())
                     val formattedDate: String = outputFormat.format(date!!)
                     val resultWorld = World(responseWorld?.TotalConfirmed, responseWorld?.TotalRecovered, responseWorld?.TotalDeaths, formattedDate)
                     worldList.postValue(resultWorld)

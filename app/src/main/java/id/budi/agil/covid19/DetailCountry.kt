@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
@@ -68,7 +67,7 @@ class DetailCountry : AppCompatActivity() {
                 val lineActive = LineDataSet(data.dataActive, resources.getString(R.string.positive))
                 val lineDeaths = LineDataSet(data.dataDeaths, resources.getString(R.string.deaths))
 
-                setupDrawing(lineConfirmed, "00C853")
+                setupDrawing(lineConfirmed, "537388")
                 setupDrawing(lineRecovered, "00C853")
                 setupDrawing(lineActive, "FFAB00")
                 setupDrawing(lineDeaths, "D50000")
@@ -99,15 +98,12 @@ class DetailCountry : AppCompatActivity() {
     }
 
     private fun setupDrawing(line: LineDataSet, parseColor: String) {
-        val color = Color.parseColor("#$parseColor")
-
         line.setDrawValues(false)
         line.setDrawFilled(true)
         line.lineWidth = 2f
-        line.color = color
+        line.color = Color.parseColor("#$parseColor")
         line.fillColor = Color.parseColor("#D0$parseColor")
     }
-
 
     private fun detailShow() {
         showLoading(1,true)
@@ -139,6 +135,7 @@ class DetailCountry : AppCompatActivity() {
         }
         showLoading(1,false)
     }
+
     private fun showLoading(select: Int,status: Boolean){
         when(select){
             1-> if (status){

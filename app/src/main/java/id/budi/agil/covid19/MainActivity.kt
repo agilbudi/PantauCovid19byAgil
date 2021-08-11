@@ -1,10 +1,8 @@
 package id.budi.agil.covid19
 
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.PopupMenu
@@ -20,7 +18,6 @@ import id.budi.agil.covid19.view_model.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -44,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val searchView = binding.mainSv
-
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
 
         binding.mainRvCountries.apply {
@@ -86,11 +82,13 @@ class MainActivity : AppCompatActivity() {
             showLoading(true)
             showData(null)
         }
+
         mainAdapter.setOnItemClickCallback(object : MainAdapter.OnItemClickCallback{
             override fun onItemClicked(data: Countries) {
                 selectedItem(data)
             }
         })
+
     }
 
     private fun showData(query: String?) {

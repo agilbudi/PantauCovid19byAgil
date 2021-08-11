@@ -2,13 +2,11 @@ package id.budi.agil.covid19.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Filter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import id.budi.agil.covid19.databinding.ItemListBinding
 import id.budi.agil.covid19.model.Countries
-import id.budi.agil.covid19.model.World
 import java.util.*
 import kotlin.collections.ArrayList
 

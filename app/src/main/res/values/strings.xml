@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Pantau Covid19 by Agil</string>
+    <string name="recovered">Sembuh</string>
+    <string name="confirmed">Terkonfirmasi</string>
+    <string name="deaths">Meninggal</string>
+    <string name="by_agil">by Agil</string>
+    <string name="title">Pantau Covid</string>
+    <string name="country">Negara</string>
+    <string name="search">Cari Negara</string>
+    <string name="key_theme">tema</string>
+    <string name="titik_dua"> : </string>
+    <string name="zero">0</string>
+    <string name="total_recovered">Total Sembuh</string>
+    <string name="positive">Positif</string>
+    <string name="total_confirmed">Total Terkonfirmasi</string>
+    <string name="total_deaths">Total Meninggal</string>
+    <string name="second_title1">Status Covid</string>
+    <string name="second_title2">di Dunia</string>
+    <string name="date">Tanggal</string>
+    <string name="nodata">Tidak ada</string>
+    <string name="data_cases">Data Kasus</string>
+</resources>

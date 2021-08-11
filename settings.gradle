@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Pantau Covid19 by Agil"

@@ -28,8 +28,8 @@ class MainViewModel: ViewModel() {
         apiService.getSummary().enqueue(object : Callback<AllCountries>{
             override fun onResponse(call: Call<AllCountries>, response: Response<AllCountries>) {
                 if (response.isSuccessful) {
-                    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SS.348'Z'")
-                    val outputFormat = SimpleDateFormat("dddd, dd MMMM yyyy")
+                    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    val outputFormat = SimpleDateFormat("EEEE, dd MMMM yyyy")
                     val responseCountries: ArrayList<Countries>? = response.body()?.Countries
                     val responseWorld = response.body()?.Global
 

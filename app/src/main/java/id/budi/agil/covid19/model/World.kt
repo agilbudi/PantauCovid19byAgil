@@ -5,6 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class World(
+        // data object menurut respond dari api
     val TotalConfirmed: String?,
     val TotalRecovered: String?,
     val TotalDeaths: String?,

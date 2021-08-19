@@ -13,4 +13,12 @@
     <color name="death">#D50000</color>
     <color name="shadow">#717171</color>
     <color name="confirmed">#537388</color>
+    <color name="transparent">#00000000</color>
+    <color name="primary">?attr/colorPrimary</color>
+    <color name="secondary">?attr/colorSecondary</color>
+    <color name="on_primary">?attr/colorOnPrimary</color>
+    <color name="on_secondary">?attr/colorOnSecondary</color>
+    <color name="primary_variant">?attr/colorPrimaryVariant</color>
+    <color name="secondary_variant">?attr/colorSecondaryVariant</color>
+    <color name="light">#A2FFFFFF</color>
 </resources>

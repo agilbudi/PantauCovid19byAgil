@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_theme_night"
-        android:title="Gelap"
+        android:title="@string/dark"
         android:icon="@drawable/ic_phone"
         android:iconTint="#303030"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_theme_light"
-        android:title="Terang"
+        android:title="@string/bright"
         android:icon="@drawable/ic_phone"
         android:iconTint="#A1A1A1"
         app:showAsAction="ifRoom"/>

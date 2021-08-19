@@ -19,4 +19,7 @@
     <string name="date">Tanggal</string>
     <string name="nodata">Tidak ada</string>
     <string name="data_cases">Data Kasus</string>
+    <string name="dark">Gelap</string>
+    <string name="bright">Terang</string>
+    <string name="today_status">"Status hari ini: "</string>
 </resources>

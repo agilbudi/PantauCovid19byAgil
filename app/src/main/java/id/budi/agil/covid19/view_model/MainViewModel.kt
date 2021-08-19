@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import id.budi.agil.covid19.R
 import id.budi.agil.covid19.api.ApiService
 import id.budi.agil.covid19.model.AllCountries
 import id.budi.agil.covid19.model.Countries
@@ -26,14 +27,16 @@ class MainViewModel: ViewModel() {
         countryFilterList = countryList
     }
 
-    fun  setSummary(query: String?){
+    fun setSummary(query: String?){
+        // mengambil data dari api melalui apiService
         apiService.getSummary().enqueue(object : Callback<AllCountries>{
             override fun onResponse(call: Call<AllCountries>, response: Response<AllCountries>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful) { // saat mendapatkan respond dari api
                     val responseCountries: ArrayList<Countries>? = response.body()?.Countries
                     val responseWorld = response.body()?.Global
 
                     if (query != null) {
+                        // jika sedang mode pencarian
                         val resultList = ArrayList<Countries>()
                         if (responseCountries != null) {
                             for (row in responseCountries) {
@@ -41,15 +44,19 @@ class MainViewModel: ViewModel() {
                                     resultList.add(row)
                                 }
                             }
-                            countryList.postValue(resultList)
+                            countryList.postValue(resultList) // mengisi data countryList dengan data pencarian countries
                         }
                     } else {
-                        countryList.postValue(responseCountries)
+                        // jika bukan mode pencarian atau normal
+                        countryList.postValue(responseCountries) // mengisi data countryList dengan data semua countries
                     }
+
+                    // mengubah format date yang diinginkan dari format date yang diterima dari api
                     val date: Date? = inputFormat.parse(responseWorld?.Date.toString())
                     val formattedDate: String = outputFormat.format(date!!)
                     val resultWorld = World(responseWorld?.TotalConfirmed, responseWorld?.TotalRecovered, responseWorld?.TotalDeaths, formattedDate)
-                    worldList.postValue(resultWorld)
+
+                    worldList.postValue(resultWorld) // mengisi data worldList semua data countries
                 }else{
                     Log.e("ON_SUMMARY_RESPONSE", response.message())
                 }
@@ -61,10 +68,27 @@ class MainViewModel: ViewModel() {
         })
     }
 
-    fun getCountries(): LiveData<ArrayList<Countries>>{
+    fun getSorted(by: Int) {
+        when(by){
+            R.id.main_rb_reset ->{
+                countryList.value?.sortBy { it.Country } // sorting berdasarkan nama Country
+            }
+            R.id.main_rb_confirmed ->{
+                countryList.value?.sortByDescending { it.TotalConfirmed?.toInt() } // sorting berdasarkan TotalConfirmed yang terbasar
+            }
+            R.id.main_rb_recovered ->{
+                countryList.value?.sortByDescending { it.TotalRecovered?.toInt() } //sorting berdasarkan TotalRecovered yang terbasar
+            }
+            R.id.main_rb_death ->{
+                countryList.value?.sortByDescending { it.TotalDeaths?.toInt() } // sorting berdasarkan TotalDeaths yang terbasar
+            }
+        }
+    }
+
+    fun getCountries(): LiveData<ArrayList<Countries>>{ // mengambil data yang ada di countryList
         return countryList
     }
-    fun getWorld(): LiveData<World>{
+    fun getWorld(): LiveData<World>{ // mengambil data yang ada di worldList
         return worldList
     }
 }

@@ -5,6 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Countries(
+        // data array dengan object menurut respond dari api
     val Country:String?,
     val Date:String?,
     val NewConfirmed:String?,

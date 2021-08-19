@@ -15,6 +15,9 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import id.budi.agil.covid19.databinding.ActivityDetailCountryBinding
 import id.budi.agil.covid19.view_model.DetailViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class DetailCountry : AppCompatActivity() {
@@ -38,7 +41,12 @@ class DetailCountry : AppCompatActivity() {
         setContentView(binding.root)
 
         val slug = intent.getStringExtra(EXTRA_SLUG)
+        // inisiasi View Model
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(DetailViewModel::class.java)
+        showLoading(1,true)
+        showLoading(2, true)
+
+        // konfigurasi favorite action button
         binding.detailFabMenu.setOnClickListener {
             val popupMenu = PopupMenu(this, binding.detailFabMenu)
             popupMenu.menuInflater.inflate(R.menu.menu, popupMenu.menu)
@@ -52,52 +60,64 @@ class DetailCountry : AppCompatActivity() {
             popupMenu.show()
         }
 
+        // menampilkan data item yang diklik
         detailShow()
+        // menampilkan data chart
         if (slug != null) chartShow(slug)
     }
 
-    private fun chartShow(slug: String) {
+    private fun chartShow(slug: String) = runBlocking{
         val chart = binding.detailLineChart
-        showLoading(2, true)
-        viewModel.setDataCases(slug)
-        viewModel.getDataCases().observe(this, {data ->
-            if (data != null){
-                val lineConfirmed = LineDataSet(data.dataConfirmed, resources.getString(R.string.confirmed))
-                val lineRecovered = LineDataSet(data.dataRecovered, resources.getString(R.string.recovered))
-                val lineActive = LineDataSet(data.dataActive, resources.getString(R.string.positive))
-                val lineDeaths = LineDataSet(data.dataDeaths, resources.getString(R.string.deaths))
+        launch {
+            // memanggil data dari View Model dengan slug negara
+            viewModel.setDataCases(slug)
+            delay(800)
+            // mengambil data DataCases dari View Model
+            viewModel.getDataCases().observe(this@DetailCountry, { data ->
+                if (data != null) {
 
-                setupDrawing(lineConfirmed, "537388")
-                setupDrawing(lineRecovered, "00C853")
-                setupDrawing(lineActive, "FFAB00")
-                setupDrawing(lineDeaths, "D50000")
+                    // membuat dataset dengan dari data DataCases
+                    val lineConfirmed = LineDataSet(data.dataConfirmed, resources.getString(R.string.confirmed))
+                    val lineRecovered = LineDataSet(data.dataRecovered, resources.getString(R.string.recovered))
+                    val lineActive = LineDataSet(data.dataActive, resources.getString(R.string.positive))
+                    val lineDeaths = LineDataSet(data.dataDeaths, resources.getString(R.string.deaths))
 
-                val xAxis: XAxis = chart.xAxis
-                xAxis.valueFormatter = IndexAxisValueFormatter(data.dateCases)
-                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                xAxis.granularity = 1f
-                xAxis.setCenterAxisLabels(false)
-                xAxis.isGranularityEnabled = true
+                    // mengatur tampilan chart
+                    setupDrawing(lineConfirmed, "537388")
+                    setupDrawing(lineRecovered, "00C853")
+                    setupDrawing(lineActive, "FFAB00")
+                    setupDrawing(lineDeaths, "D50000")
 
-                val lineData = LineData(lineConfirmed, lineRecovered, lineActive, lineDeaths)
-                chart.data = lineData
-                chart.axisLeft.axisMinimum = 0f
-                chart.axisRight.isEnabled = false
-                chart.xAxis.labelRotationAngle = 0f
-                chart.setTouchEnabled(true)
-                chart.setPinchZoom(true)
-                chart.description.isEnabled = false
-                chart.setNoDataText(resources.getString(R.string.nodata))
-                chart.setNoDataTextColor(R.attr.colorOnSecondary)
-                chart.animateX(1900, Easing.EaseInOutElastic)
-                chart.invalidate()
-                chart.setVisibleXRangeMaximum(30f)
-            }
-        })
-        showLoading(2, false)
+                    // mengatur sumbu vertical
+                    val xAxis: XAxis = chart.xAxis
+                    xAxis.valueFormatter = IndexAxisValueFormatter(data.dateCases)
+                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                    xAxis.granularity = 1f
+                    xAxis.setCenterAxisLabels(false)
+                    xAxis.isGranularityEnabled = true
+
+                    // konfigurasi sumbu
+                    val lineData = LineData(lineConfirmed, lineRecovered, lineActive, lineDeaths)
+                    chart.data = lineData
+                    chart.axisLeft.axisMinimum = 0f
+                    chart.axisRight.isEnabled = false
+                    chart.xAxis.labelRotationAngle = 0f
+                    chart.setTouchEnabled(true)
+                    chart.setPinchZoom(true)
+                    chart.description.isEnabled = false
+                    chart.setNoDataText(resources.getString(R.string.nodata))
+                    chart.setNoDataTextColor(R.attr.colorOnSecondary)
+                    chart.animateX(1900, Easing.EaseInOutElastic)
+                    chart.invalidate()
+                    chart.setVisibleXRangeMaximum(30f)
+                }
+            })
+            showLoading(2, false)
+        }
     }
 
     private fun setupDrawing(line: LineDataSet, parseColor: String) {
+        // konfigurasi tampilan chart
         line.setDrawValues(false)
         line.setDrawFilled(true)
         line.lineWidth = 2f
@@ -106,7 +126,7 @@ class DetailCountry : AppCompatActivity() {
     }
 
     private fun detailShow() {
-        showLoading(1,true)
+        // mengambil data dari intent
         val country = intent.getStringExtra(EXTRA_COUNTRY)
         val countryCode = intent.getStringExtra(EXTRA_COUNTRY_CODE)
         val urlFlagCountry = "https://www.countryflags.io/${countryCode?.toLowerCase(Locale.ROOT)}/shiny/64.png"
@@ -119,9 +139,10 @@ class DetailCountry : AppCompatActivity() {
         val date = intent.getStringExtra(EXTRA_DATE)
 
         with(binding){
+            // set view
             Glide.with(this@DetailCountry)
                 .load(urlFlagCountry)
-                .apply(RequestOptions().override(200,84))
+                .apply(RequestOptions().override(134,84))
                 .apply(RequestOptions().centerCrop())
                 .into(detailIcFlag)
             detailTvCountry.text = country
@@ -131,24 +152,27 @@ class DetailCountry : AppCompatActivity() {
             detailTvConfirmed.text = newConfirmed
             detailTvRecovered.text = newRecovered
             detailTvDeaths.text = newDeaths
-            detailTvDate.text = date
+            detailTvDate.text = (resources.getString(R.string.today_status) + date)
         }
         showLoading(1,false)
     }
 
-    private fun showLoading(select: Int,status: Boolean){
-        when(select){
-            1-> if (status){
-                binding.detailProgress1.visibility = View.VISIBLE
-            }else{
-                binding.detailProgress1.visibility = View.GONE
+    private fun showLoading(select: Int,status: Boolean) {
+            when (select) {
+                1 -> if (status) {
+                    // loading terlihat
+                    binding.detailProgress1.visibility = View.VISIBLE
+                } else {
+                    // loaging menghilang
+                    binding.detailProgress1.visibility = View.GONE
+                }
+                2 -> if (status) {
+                    // loading terlihat
+                    binding.detailProgress2.visibility = View.VISIBLE
+                } else {
+                    // loaging menghilang
+                    binding.detailProgress2.visibility = View.GONE
+                }
             }
-            2-> if (status){
-                binding.detailProgress2.visibility = View.VISIBLE
-            }
-            else{
-                binding.detailProgress2.visibility = View.GONE
-            }
-        }
     }
 }

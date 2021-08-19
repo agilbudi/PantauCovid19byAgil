@@ -7,7 +7,7 @@
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@android:color/darker_gray</item>
-        <item name="colorSecondaryVariant">#E1F5FE</item>
+        <item name="colorSecondaryVariant">#A2FFFFFF</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
@@ -35,6 +35,4 @@
         <item name="android:textSize">11sp</item>
         <item name="android:fontFamily">monospace</item>
     </style>
-
-
 </resources>

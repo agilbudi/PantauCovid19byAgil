@@ -7,9 +7,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface CovidApi {
-    @GET("summary")
-    fun getAllCountries(): Call<AllCountries>
+    @GET("summary") // menjadi https://api.covid19api.com/summary
+    fun getAllCountries(): Call<AllCountries> // fungsi mengambil data api dengan url https://api.covid19api.com/summary
 
-    @GET("dayone/country/{country}")
-    fun getInfoCountry(@Path("country") country:String?): Call<ArrayList<InfoCountry>>
+    @GET("dayone/country/{country}") // menjadi https://api.covid19api.com/dayone/country/indonesia #misal negara indonesia
+    fun getInfoCountry(@Path("country") country:String?): Call<ArrayList<InfoCountry>> // fungsi mengambil data api dengan url https://api.covid19api.com/dayone/country/{country}
 }

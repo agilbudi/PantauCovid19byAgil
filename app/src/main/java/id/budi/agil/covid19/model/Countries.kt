@@ -16,8 +16,4 @@ data class Countries(
     val TotalRecovered:String?,
     val CountryCode:String?,
     val Slug:String?
-): Parcelable{
-    constructor(): this("","","",
-    "","","","",
-    "","","")
-}
+): Parcelable

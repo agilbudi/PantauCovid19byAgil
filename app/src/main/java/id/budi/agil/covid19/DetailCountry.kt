@@ -23,18 +23,6 @@ import java.util.*
 class DetailCountry : AppCompatActivity() {
     private lateinit var binding: ActivityDetailCountryBinding
     private lateinit var viewModel: DetailViewModel
-    companion object{
-        const val EXTRA_SLUG = "slug"
-        const val EXTRA_COUNTRY_CODE = "country_code"
-        const val EXTRA_COUNTRY = "country"
-        const val EXTRA_NEW_CONFIRMED = "new_confirmed"
-        const val EXTRA_NEW_DEATHS = "new_deaths"
-        const val EXTRA_NEW_RECOVERED = "new_recovered"
-        const val EXTRA_CONFIRMED = "confirmed"
-        const val EXTRA_DEATHS = "deaths"
-        const val EXTRA_RECOVERED = "recovered"
-        const val EXTRA_DATE = "date"
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailCountryBinding.inflate(layoutInflater)
@@ -42,7 +30,8 @@ class DetailCountry : AppCompatActivity() {
 
         val slug = intent.getStringExtra(EXTRA_SLUG)
         // inisiasi View Model
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(DetailViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(
+            DetailViewModel::class.java)
         showLoading(1,true)
         showLoading(2, true)
 
@@ -174,5 +163,18 @@ class DetailCountry : AppCompatActivity() {
                     binding.detailProgress2.visibility = View.GONE
                 }
             }
+    }
+
+    companion object{
+        const val EXTRA_SLUG = "slug"
+        const val EXTRA_COUNTRY_CODE = "country_code"
+        const val EXTRA_COUNTRY = "country"
+        const val EXTRA_NEW_CONFIRMED = "new_confirmed"
+        const val EXTRA_NEW_DEATHS = "new_deaths"
+        const val EXTRA_NEW_RECOVERED = "new_recovered"
+        const val EXTRA_CONFIRMED = "confirmed"
+        const val EXTRA_DEATHS = "deaths"
+        const val EXTRA_RECOVERED = "recovered"
+        const val EXTRA_DATE = "date"
     }
 }

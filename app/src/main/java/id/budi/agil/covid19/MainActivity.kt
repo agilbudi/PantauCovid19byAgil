@@ -13,6 +13,7 @@ import id.budi.agil.covid19.adapter.MainAdapter
 import id.budi.agil.covid19.databinding.ActivityMainBinding
 import id.budi.agil.covid19.model.Countries
 import id.budi.agil.covid19.view_model.MainViewModel
+import id.budi.agil.covid19.view_model.ViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -24,84 +25,86 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private val mainAdapter = MainAdapter()
     private lateinit var dateWorld: String
-    companion object{
-        // fungsi untuk mengubah tema
-        fun changeTheme(status: Boolean): Boolean {
-            if (status){
-                // untuk tema gelap
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }else{
-                // untuk tema terang
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-            return true
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val searchView = binding.mainSv
-        // inisiasi View Model
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+        val mainViewModel = obtainViewModel(this@MainActivity)
 
-        // konfigurasi recyclerview
-        binding.mainRvCountries.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
-            adapter = mainAdapter
-        }
-        showLoading(true)
-        // konfigurasi kolom pencarian
-        searchView.queryHint = resources.getString(R.string.search)
-        initSearch(searchView)
+//        GlobalData 	= https://covid19.who.int/WHO-COVID-19-global-data.csv
+//        GlobalTableData = https://covid19.who.int/WHO-COVID-19-global-table-data.csv
 
-        // kondisi jika data masih kosong
-        if(viewModel.getCountries().value == null){
-            showLoading(true)
-            showData(null)
-        }
-        // konfigurasi radiobutton
-        binding.mainRbReset.isChecked = true
-        binding.mainRg.setOnCheckedChangeListener{ _, checkedId ->
-            // sorting dengan mengirim id radio button yang terpilih
-            sortBy(checkedId)
+        if (mainViewModel.dbEmpty()){
+            //TODO download data & save data
         }
 
-        // konfigurasi favorite action button
-        binding.mainFabMenu.setOnClickListener {
-            val popupMenu = PopupMenu(this, binding.mainFabMenu)
-            popupMenu.menuInflater.inflate(R.menu.menu, popupMenu.menu)
-            popupMenu.setOnMenuItemClickListener {item ->
-                when(item.itemId){
-                    R.id.menu_theme_light -> changeTheme(false)
-                    R.id.menu_theme_night -> changeTheme(true)
-                    else -> changeTheme(false)
-                }
-            }
-            popupMenu.show()
-        }
 
-        // konfigurasi action klik setiap item di recyclerview
-        mainAdapter.setOnItemClickCallback(object : MainAdapter.OnItemClickCallback{
-            override fun onItemClicked(data: Countries) {
-                // mengirimkan data yang diklik
-                selectedItem(data)
-            }
-        })
+//
+//        val searchView = binding.mainSv
+//        // inisiasi View Model
+//        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+//
+//        // konfigurasi recyclerview
+//        binding.mainRvCountries.apply {
+//            setHasFixedSize(true)
+//            layoutManager = LinearLayoutManager(context)
+//            adapter = mainAdapter
+//        }
+//        showLoading(true)
+//        // konfigurasi kolom pencarian
+//        searchView.queryHint = resources.getString(R.string.search)
+//        initSearch(searchView)
+//
+//        // kondisi jika data masih kosong
+//        if(viewModel.getCountries().value == null){
+//            showLoading(true)
+//            showData(null)
+//        }
+//        // konfigurasi radiobutton
+//        binding.mainRbReset.isChecked = true
+//        binding.mainRg.setOnCheckedChangeListener{ _, checkedId ->
+//            // sorting dengan mengirim id radio button yang terpilih
+//            sortBy(checkedId)
+//        }
+//
+//        // konfigurasi favorite action button
+//        binding.mainFabMenu.setOnClickListener {
+//            val popupMenu = PopupMenu(this, binding.mainFabMenu)
+//            popupMenu.menuInflater.inflate(R.menu.menu, popupMenu.menu)
+//            popupMenu.setOnMenuItemClickListener {item ->
+//                when(item.itemId){
+//                    R.id.menu_theme_light -> changeTheme(false)
+//                    R.id.menu_theme_night -> changeTheme(true)
+//                    else -> changeTheme(false)
+//                }
+//            }
+//            popupMenu.show()
+//        }
+//
+//        // konfigurasi action klik setiap item di recyclerview
+//        mainAdapter.setOnItemClickCallback(object : MainAdapter.OnItemClickCallback{
+//            override fun onItemClicked(data: Countries) {
+//                // mengirimkan data yang diklik
+//                selectedItem(data)
+//            }
+//        })
+    }
+
+    private fun obtainViewModel(activity: AppCompatActivity): MainViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[MainViewModel::class.java]
     }
 
     private fun sortBy(checkedId: Int) {
         // mengirim id radio button ke View Model untuk mengurutkan data berdasarkan keterangan radio button
         viewModel.getSorted(checkedId)
         // mengambil data countries dari View Model
-        viewModel.getCountries().observe(this@MainActivity, { items ->
+        viewModel.getCountries().observe(this@MainActivity) { items ->
             if (items != null) {
                 // mengupdate adapter untuk recyclerview
                 mainAdapter.updateCountries(items)
             }
-        })
+        }
     }
 
     private fun initSearch(searchView: SearchView) {
@@ -132,26 +135,28 @@ class MainActivity : AppCompatActivity() {
             viewModel.setSummary(query)
             delay(600)
             // mengambil data world dari View Model
-            viewModel.getWorld().observe(this@MainActivity, { items ->
+            viewModel.getWorld().observe(this@MainActivity) { items ->
                 if (items != null) {
                     // set view
                     with(binding) {
-                        mainTvWorldRecovered.text = formatNumber.format(items.TotalRecovered?.toFloat())
-                        mainTvWorldPositive.text = formatNumber.format(items.TotalConfirmed?.toFloat())
+                        mainTvWorldRecovered.text =
+                            formatNumber.format(items.TotalRecovered?.toFloat())
+                        mainTvWorldPositive.text =
+                            formatNumber.format(items.TotalConfirmed?.toFloat())
                         mainTvWorldDeaths.text = formatNumber.format(items.TotalDeaths?.toFloat())
                         mainTvDate.text = items.Date
                         dateWorld = items.Date.toString()
                     }
                 }
-            })
+            }
             // mengambil data countries dari View Model
-            viewModel.getCountries().observe(this@MainActivity, { items ->
+            viewModel.getCountries().observe(this@MainActivity) { items ->
                 if (items != null) {
                     // mengupdate adapter untuk recyclerview
                     mainAdapter.updateCountries(items)
                 }
                 showLoading(false)
-            })
+            }
         }
     }
 
@@ -182,4 +187,19 @@ class MainActivity : AppCompatActivity() {
                 binding.mainProgress.visibility = View.GONE
             }
     }
+
+    companion object{
+        // fungsi untuk mengubah tema
+        fun changeTheme(status: Boolean): Boolean {
+            if (status){
+                // untuk tema gelap
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }else{
+                // untuk tema terang
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            return true
+        }
+    }
+
 }

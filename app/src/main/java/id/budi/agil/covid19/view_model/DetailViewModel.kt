@@ -1,5 +1,6 @@
 package id.budi.agil.covid19.view_model
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DetailViewModel: ViewModel() {
+class DetailViewModel(application:Application): ViewModel() {
     private val apiService = ApiService
     private val dataCases = MutableLiveData<ChartCases>()
 
